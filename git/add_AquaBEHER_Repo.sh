@@ -11,8 +11,20 @@
  git config --global user.name "RobelTakele" 
  
  git config --global user.email "takelerobel@gmail.com"
+ 
+ # Changing Your Committer Name & Email per Repository
+ 
+  git config  user.name "RobelTakele" 
+ 
+  git config user.email "takelerobel@gmail.com"
+ 
+ # ***** Authorise GitHub CLI: you need to authorise it with your GitHub account.
 
-
+ gh auth login # ?????????
+ 
+ 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
+ 
+#################################################################################################################################################################################
 # ***** Initialize the local directory as a Git repository. By default the initial branch is called master.
 
  git init -b main
@@ -21,9 +33,7 @@
 
  git add . && git commit -m "initial commit"
 
-# ***** Authorise GitHub CLI: you need to authorise it with your GitHub account.
 
- gh auth login # ?????????
  
 # ***** Now, ythe directory is Git ready and your terminal is authorised to make changes to your GitHub account.  
 # The command below will create a repository in GitHub called "My-NewRepo".  It will be a public repository.  
