@@ -5,6 +5,14 @@
 #                                                                                                                                                                              #
 ################################################################################################################################################################################
 
+# Changing Your Git Author Identity
+# Changing Your Committer Name & Email Globally
+
+ git config --global user.name "RobelTakele" 
+ 
+ git config --global user.email "takelerobel@gmail.com"
+
+
 # ***** Initialize the local directory as a Git repository. By default the initial branch is called master.
 
  git init -b main
