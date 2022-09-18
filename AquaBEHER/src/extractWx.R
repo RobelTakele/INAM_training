@@ -26,49 +26,109 @@ enddate <- paste0(years, "-08-31")
 
 # ********* selecting years using cdo
 
-system(paste('cdo seldate,', startdate, ',', enddate, ' ' , rain.nc.file, ' ',
-             tmpDir(), 'rain.nc', sep=''))
+# system(paste('cdo seldate,', startdate, ',', enddate, ' ' , rain.nc.file, ' ',
+#              tmpDir(), 'rain.nc', sep=''))
+#
+# data.rain <- raster::resample(brick(paste0(tmpDir(), 'rain.nc')), r, method = "bilinear")
 
-data.rain <- raster::resample(brick(paste0(tmpDir(), 'rain.nc')), r, method = "bilinear")
 
-# ***********************
+data.rain.ras <- brick(rain.nc.file)
 
-system(paste('cdo seldate,', startdate, ',', enddate, ' ' , tmax.nc.file, ' ',
-             tmpDir(), 'tmax.nc', sep=''))
+ rain.nms <- names(data.rain.ras)
+ rain.nms.date.vec <- paste0(substr(rain.nms, 2, 5), "-", substr(rain.nms, 7, 8), "-", substr(rain.nms, 10, 11))
+ startdate.index <- which(rain.nms.date.vec == startdate)
+ enddate.index <- which(rain.nms.date.vec == enddate)
 
-data.tmax <- raster::resample(brick(paste0(tmpDir(), 'tmax.nc')), r, method = "bilinear")
-raster::values(data.tmax) <- udunits2::ud.convert(raster::values(data.tmax), "K", "Celsius")
+ data.rain <- data.rain.ras[[startdate.index:enddate.index]] #,  r, method = "bilinear")
 
-# ******************
+# ***************************************************************************************************
 
-system(paste('cdo seldate,', startdate, ',', enddate, ' ' , tmin.nc.file, ' ',
-             tmpDir(), 'tmin.nc', sep=''))
+# system(paste('cdo seldate,', startdate, ',', enddate, ' ' , tmax.nc.file, ' ',
+         #    tmpDir(), 'tmax.nc', sep=''))
 
-data.tmin <- raster::resample(brick(paste0(tmpDir(), 'tmin.nc')), r, method = "bilinear")
-raster::values(data.tmin) <- ud.convert(raster::values(data.tmin), "K", "Celsius")
+# data.tmax <- raster::resample(brick(paste0(tmpDir(), 'tmax.nc')), r, method = "bilinear")
+# raster::values(data.tmax) <- udunits2::ud.convert(raster::values(data.tmax), "K", "Celsius")
 
-# *******************
+ data.tmax.ras <- brick(tmax.nc.file)
 
-system(paste('cdo seldate,', startdate, ',', enddate, ' ' , srad.nc.file, ' ',
-             tmpDir(), 'srad.nc', sep=''))
+ tmax.nms <- names(data.tmax.ras)
+ tmax.nms.date.vec <- paste0(substr(tmax.nms, 2, 5), "-", substr(tmax.nms, 7, 8), "-", substr(tmax.nms, 10, 11))
+ startdate.index <- which(tmax.nms.date.vec == startdate)
+ enddate.index <- which(tmax.nms.date.vec == enddate)
 
-data.srad <- raster::resample(brick(paste0(tmpDir(), 'srad.nc')), r, method = "bilinear")
-raster::values(data.srad) <- ud.convert(raster::values(data.srad), "J/m2/day", "MJ/m2/day")
+ data.tmax <- data.tmax.ras[[startdate.index:enddate.index]]  #,  r, method = "bilinear")
+ raster::values(data.tmax) <- udunits2::ud.convert(raster::values(data.tmax), "K", "Celsius")
 
-# ******************
+# ******************************************************************************************************
 
- system(paste('cdo seldate,', startdate, ',', enddate, ' ' , u10.nc.file, ' ',
-              tmpDir(), 'u10.nc', sep=''))
+# system(paste('cdo seldate,', startdate, ',', enddate, ' ' , tmin.nc.file, ' ',
+#              tmpDir(), 'tmin.nc', sep=''))
+#
+# data.tmin <- raster::resample(brick(paste0(tmpDir(), 'tmin.nc')), r, method = "bilinear")
+# raster::values(data.tmin) <- ud.convert(raster::values(data.tmin), "K", "Celsius")
 
- data.u10 <- raster::resample(brick(paste0(tmpDir(), 'u10.nc')), r, method = "bilinear")
+ data.tmin.ras <- brick(tmin.nc.file)
 
-# ******************
+ tmin.nms <- names(data.tmin.ras)
+ tmin.nms.date.vec <- paste0(substr(tmin.nms, 2, 5), "-", substr(tmin.nms, 7, 8), "-", substr(tmin.nms, 10, 11))
+ startdate.index <- which(tmin.nms.date.vec == startdate)
+ enddate.index <- which(tmin.nms.date.vec == enddate)
 
- system(paste('cdo seldate,', startdate, ',', enddate, ' ' , Tdew.nc.file, ' ',
-              tmpDir(), 'Tdew.nc', sep=''))
+ data.tmin <- data.tmin.ras[[startdate.index:enddate.index]] #,  r, method = "bilinear")
+ raster::values(data.tmin) <- udunits2::ud.convert(raster::values(data.tmin), "K", "Celsius")
 
- data.Tdew <- raster::resample(brick(paste0(tmpDir(), 'Tdew.nc')), r, method = "bilinear")
- raster::values(data.Tdew) <- ud.convert(raster::values(data.Tdew), "K", "Celsius")
+# **********************************************************************************************************
+
+# system(paste('cdo seldate,', startdate, ',', enddate, ' ' , srad.nc.file, ' ',
+#              tmpDir(), 'srad.nc', sep=''))
+#
+# data.srad <- raster::resample(brick(paste0(tmpDir(), 'srad.nc')), r, method = "bilinear")
+# raster::values(data.srad) <- ud.convert(raster::values(data.srad), "J/m2/day", "MJ/m2/day")
+
+data.srad.ras <- brick(srad.nc.file)
+
+srad.nms <- names(data.srad.ras)
+srad.nms.date.vec <- paste0(substr(srad.nms, 2, 5), "-", substr(srad.nms, 7, 8), "-", substr(srad.nms, 10, 11))
+startdate.index <- which(srad.nms.date.vec == startdate)
+enddate.index <- which(srad.nms.date.vec == enddate)
+
+data.srad <- data.srad.ras[[startdate.index:enddate.index]] #,  r, method = "bilinear")
+raster::values(data.srad) <- udunits2::ud.convert(raster::values(data.srad), "J/m2/day", "MJ/m2/day")
+
+
+# **************************************************************************************************************
+
+#  system(paste('cdo seldate,', startdate, ',', enddate, ' ' , u10.nc.file, ' ',
+#               tmpDir(), 'u10.nc', sep=''))
+#
+#  data.u10 <- raster::resample(brick(paste0(tmpDir(), 'u10.nc')), r, method = "bilinear")
+
+data.u10.ras <- brick(u10.nc.file)
+
+u10.nms <- names(data.u10.ras)
+u10.nms.date.vec <- paste0(substr(u10.nms, 2, 5), "-", substr(u10.nms, 7, 8), "-", substr(u10.nms, 10, 11))
+startdate.index <- which(u10.nms.date.vec == startdate)
+enddate.index <- which(u10.nms.date.vec == enddate)
+
+data.u10 <- data.u10.ras[[startdate.index:enddate.index]] #,  r, method = "bilinear")
+
+# # *******************************************************************************************************************
+#
+#  system(paste('cdo seldate,', startdate, ',', enddate, ' ' , Tdew.nc.file, ' ',
+#               tmpDir(), 'Tdew.nc', sep=''))
+#
+#  data.Tdew <- raster::resample(brick(paste0(tmpDir(), 'Tdew.nc')), r, method = "bilinear")
+#  raster::values(data.Tdew) <- ud.convert(raster::values(data.Tdew), "K", "Celsius")
+
+ data.Tdew.ras <- brick(Tdew.nc.file)
+
+ Tdew.nms <- names(data.Tdew.ras)
+ Tdew.nms.date.vec <- paste0(substr(Tdew.nms, 2, 5), "-", substr(Tdew.nms, 7, 8), "-", substr(Tdew.nms, 10, 11))
+ startdate.index <- which(Tdew.nms.date.vec == startdate)
+ enddate.index <- which(Tdew.nms.date.vec == enddate)
+
+ data.Tdew <- data.Tdew.ras[[startdate.index:enddate.index]]#,  r, method = "bilinear")
+ raster::values(data.Tdew) <- udunits2::ud.convert(raster::values(data.Tdew), "K", "Celsius")
 
 ######################################################################################################################################################
  # extract grid cells

@@ -1,7 +1,6 @@
 #!/usr/local/bin/Rscript
 ######################################################################################################################################################
 
-
 rm(list=ls())
 
  library(rworldxtra)
@@ -26,7 +25,7 @@ rm(list=ls())
 
 # >>>>>>>>>>>> Setting location of AquaBEHER root directory >>>>>>
 
- rootDir = "/home/robel/EU_FOCUSafrica/workbench/intraSeasonal/AquaBEHER/"
+ rootDir = "/home/robel/EU_FOCUSafrica/gitRepo/INAM_training/AquaBEHER/"
 
  # >>>>>>>>>>>> select experiment >>>>>>
 
@@ -42,12 +41,17 @@ rm(list=ls())
 # 2. "Mozambique"
 # 3. "Tanzania"
 # 4. "South eastern Africa": i.e  c("Malawi", "Mozambique", "Tanzania")
+# 5. "Custom
 
- runDomain = 2
+# if selected option is custom, the provide the location of your custom shapfile
+
+ shp <- subset(readOGR(paste0(rootDir, "data/GADM/sPDF/gadm36_MOZ_1.shp")), NAME_1 == "Nampula")
+
+ runDomain = 5
 
  # >>>>>>>>>>>> select seasons >>>>>>
 
- year.start = 2015    # <<<<< starting year of the run [YYYY] <<<<<<<<<<<<<<<
+ year.start = 2018    # <<<<< starting year of the run [YYYY] <<<<<<<<<<<<<<<
 
  year.end = 2020    # <<<<< ending year of the run [YYYY] <<<<<<<<<<<<<<<
 
@@ -57,13 +61,15 @@ rm(list=ls())
  # 1. "Climatic"
  # 2. "AgroClimatic"
 
- rainSeas.method = 1
+ # rainSeas.method = 1
 
+######################################################################################################################################################
+######################################################################################################################################################
 ######################################################################################################################################################
 ######################################################################################################################################################
 # ***** setting prams ***************
 
- location.list <- list("Malawi", "Mozambique", "Tanzania", "SouthEasternAfrica")
+ location.list <- list("Malawi", "Mozambique", "Tanzania", "SouthEasternAfrica", "Custom")
  experiment.list <- list("Observed", "SeasonalForecast", "ClimateProjection")
 
  #----------------------------------------------------------------------------------------------------
@@ -83,8 +89,6 @@ rm(list=ls())
  source(paste(rootDir,"/src/calcWatBal.R",sep=""))
  source(paste(rootDir,"/src/calc_seasParams.R",sep=""))
 
-
-
 ######################################################################################################################################################
 ######################################################################################################################################################
 ######################################################################################################################################################
@@ -101,7 +105,7 @@ rm(list=ls())
  reg.list <-  list(malawi.sPdF, mozambique.sPdF, tanzania.sPdF)
  reg.sPdF <- Reduce(spRbind, reg.list)
 
- Domains <- list(malawi.sPdF, mozambique.sPdF, tanzania.sPdF, reg.sPdF)
+ Domains <- list(malawi.sPdF, mozambique.sPdF, tanzania.sPdF, reg.sPdF, shp)
 
  dom.sPdF <- Domains[[runDomain]]
 
@@ -111,7 +115,7 @@ rm(list=ls())
 
 # **** creating template raster ***************************************
 
- r <- raster(extent(dom.sPdF), crs=my.proj, resolution=0.0833, vals=1)
+ r <- raster(extent(dom.sPdF), crs=my.proj, resolution=0.1, vals=1)
 
 # ****************************************************************************************************************************************************
 # ***** creating grid schema
@@ -153,12 +157,12 @@ if (!file.exists(exp.dir)) {dir.create(exp.dir)}
 #
 ######################################################################################################################################################
 
-rain.nc.file <- paste0(rootDir, "data/climate/observed/Rain/Africa_AgERA5_rain_dly_1980T2020.nc")
-tmax.nc.file <- paste0(rootDir, "data/climate/observed/Tmax/Africa_AgERA5_tmax_dly_1980T2020.nc")
-tmin.nc.file <- paste0(rootDir, "data/climate/observed/Tmin/Africa_AgERA5_tmin_dly_1980T2020.nc")
-srad.nc.file <- paste0(rootDir, "data/climate/observed/SRAD/Africa_AgERA5_srad_dly_1980T2020.nc")
-u10.nc.file <-  paste0(rootDir, "data/climate/observed/U10/Africa_AgERA5_U10_dly_1980T2020.nc")
-Tdew.nc.file <-  paste0(rootDir, "data/climate/observed/Tdew/Africa_AgERA5_Tdew_dly_1980T2020.nc")
+rain.nc.file <- paste0(rootDir, "data/climate/observed/Rain/moz_AgERA5_rain_dly_1980T2020.nc")
+tmax.nc.file <- paste0(rootDir, "data/climate/observed/Tmax/moz_AgERA5_tmax_dly_1980T2020.nc")
+tmin.nc.file <- paste0(rootDir, "data/climate/observed/Tmin/moz_AgERA5_tmin_dly_1980T2020.nc")
+srad.nc.file <- paste0(rootDir, "data/climate/observed/SRAD/moz_AgERA5_srad_dly_1980T2020.nc")
+u10.nc.file <-  paste0(rootDir, "data/climate/observed/U10/moz_AgERA5_U10_dly_1980T2020.nc")
+Tdew.nc.file <-  paste0(rootDir, "data/climate/observed/Tdew/moz_AgERA5_Tdew_dly_1980T2020.nc")
 
 # ****************************************************************************************************************************************************
 
@@ -173,7 +177,7 @@ for (seas in season.vec) {
         print(paste0("[",seas,"/",season.vec[length(season.vec)],"] ","Processing year: ",
                      as.character(seas)), quote = FALSE)
 
-        cat("\n...extracting data for season =", seas,"\n")
+        cat("\n...extracting weather data for season =", seas,"\n")
 
         if (!file.exists(paste(exp.dir,"/Weather/", location, "_WTH_", seas,".RData",sep=""))) {
 
@@ -203,9 +207,13 @@ for (seas in season.vec) {
 
 }
 
+
 ######################################################################################################################################################
-# ***** extract elevation
+######################################################################################################################################################
 #
+# > > > > > > > > > Task-2: ***** extracting of Elevation, rainfall threshold and Soil > > > > >
+#
+######################################################################################################################################################
 
 elev <- raster(paste0(rootDir, "data/Elevation/SRTMv4_5min_elev.tif"))
 
