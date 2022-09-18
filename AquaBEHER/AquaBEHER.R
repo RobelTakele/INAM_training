@@ -143,6 +143,12 @@ grid.schema <- data.frame(gridID = paste0("E", substr(as.character(round(r.dF$x,
 location <- location.list[[runDomain]]
 expTyp <- experiment.list[[experiment]]
 
+main.runs.dir <- paste0(rootDir,"/runDirectory")
+if (!file.exists(main.runs.dir)) {dir.create(main.runs.dir)}
+
+dataOUT.dir <- paste0(rootDir,"/dataOUT")
+if (!file.exists(dataOUT.dir)) {dir.create(dataOUT.dir)}
+
 runs.dir <- paste0(rootDir,"/runDirectory/", location, "_Runs")
 if (!file.exists(runs.dir)) {dir.create(runs.dir)}
 
