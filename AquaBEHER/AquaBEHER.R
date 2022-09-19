@@ -251,11 +251,11 @@ if (!dir.exists(paste(runs.dir,"/Soil/", sep=""))) {dir.create(paste(runs.dir,"/
 
 if (!file.exists(paste(runs.dir, "/Soil/" , location, "_Soil.RData",sep=""))) {
 
-        root_depth <- raster::resample(brick(paste(rootDir, "/data/Soil/af_erzd__m_1km.tif",sep="")), r, "bilinear")
+        root_depth <- brick(paste(rootDir, "/data/Soil/af_erzd__m_1km.tif",sep="")) #, r, "bilinear")
         xy_soil <- grid.schema
         xy_soil$rdepth <- round(raster::extract(root_depth, data.frame(x=xy_soil$Longitude, y=xy_soil$Latitude)))
 
-        taw.mm <- raster::resample(brick(paste(rootDir, "/data/Soil/af_agg_erzd_tawcpf23mm_1km.tif",sep="")), r, "bilinear")
+        taw.mm <- brick(paste(rootDir, "/data/Soil/af_agg_erzd_tawcpf23mm_1km.tif",sep=""))  #, r, "bilinear")
         xy_soil$soilcp <- round(raster::extract(taw.mm, data.frame(x=xy_soil$Longitude, y=xy_soil$Latitude)))
         xy_soil$soilcp[xy_soil$soilcp <= 5] <- NA
 
